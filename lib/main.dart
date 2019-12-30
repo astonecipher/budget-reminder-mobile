@@ -14,7 +14,7 @@ void main() {
       '/': (context) => ListBills(),
       // When navigating to the "/second" route, build the SecondScreen widget.
 //      '/bills': (context) => Home(),
-//      '/addBill': (context) => AddBill(),
+      '/addBill': (context) => AddBill(),
     },
   ));
 }

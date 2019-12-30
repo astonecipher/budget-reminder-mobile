@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_app_test_api/interfaces/idatastore.dart';
 import '../models/bill.dart';
 import '../repositories/bill_repository.dart';
@@ -26,6 +27,7 @@ class _AddBillFormState extends State<BillForm> {
   final name = TextEditingController();
   final description = TextEditingController();
   final dueDate = TextEditingController();
+  final notifyBefore = TextEditingController();
 
   @override
   void dispose() {
@@ -33,6 +35,7 @@ class _AddBillFormState extends State<BillForm> {
     name.dispose();
     description.dispose();
     dueDate.dispose();
+    notifyBefore.dispose();
 
     super.dispose();
   }
@@ -46,27 +49,36 @@ class _AddBillFormState extends State<BillForm> {
     body:
     Column(
       children: [
-        Text("Bill Name"),
         Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextField(
               controller: name,
             )
         ),
-        Text('Description'),
+        Text("Nickname"),
         Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextField(
               controller: description,
             )
         ),
-        Text('Day Due'),
+        Text('Description'),
         Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextField(
               controller: dueDate,
+              inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
             )
         ),
+        Text('Day Due'),
+        Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+              controller: notifyBefore,
+              inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+            )
+        ),
+        Text('Notify me days prior'),
         SizedBox(
           width: double.infinity,
           // height: double.infinity,
@@ -74,18 +86,15 @@ class _AddBillFormState extends State<BillForm> {
             child: Text("Add"),
             onPressed: () {
               print(name.text);
-//              Bill _bill = new Bill('0', name.text, description.text, dueDate.text);
-//              var response = _service.addBill(_bill);
-//              _bill.dispose();
+              Bill _bill = new Bill(null, name.text, description.text, null, int.parse(dueDate.text), int.parse(notifyBefore.text));
+              var response = BillSQLiteDbProvider.db.addNewBill(_bill);
               return showDialog(
                 context: context,
                 builder: (context) {
                   return AlertDialog(
-                    // Retrieve the text the that user has entered by using the
-
-//                    content: Text("Return code from service was : ${response}"),
-
+                    content: Text("New Bill added to list!\n${response.toString()}"),
                   );
+
                 },
               );
             },
