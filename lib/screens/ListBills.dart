@@ -1,7 +1,8 @@
-import '../models/bill.dart';
+import 'package:flutter_app_test_api/models/bill.dart';
 import 'package:flutter/material.dart';
-import '../repositories/bill_repository.dart';
-import '../widgets/bill_tile.dart';
+import 'package:flutter_app_test_api/repositories/bill_repository.dart';
+import 'package:flutter_app_test_api/widgets/bill_tile.dart';
+import 'package:flutter_app_test_api/interfaces/idatastore.dart';
 
 class ListBills extends StatefulWidget {
   @override
@@ -9,36 +10,48 @@ class ListBills extends StatefulWidget {
 }
 
 class _ListBills extends State<ListBills> {
-  List<Bill> _bills = <Bill>[];
-  final _service = new BillService();
-
-
+  // TODO add DI for this
+//  final _service = new IDataStore();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("Product Navigation")),
-        body: Center(
-          child: StreamBuilder<QuerySnapshot>(
-            stream: products, builder: (context, snapshot) {
-            if (snapshot.hasError) print(snapshot.error);
-            if(snapshot.hasData) {
-              List<DocumentSnapshot>
-              documents = snapshot.data.documents;
+      appBar: AppBar(title: Text("Bill Notification List")),
+      body: FutureBuilder<List<Bill>>(
+        future: BillSQLiteDbProvider.db. getAllBills(),
+        builder: (BuildContext context, AsyncSnapshot<List<Bill>> snapshot) {
+          if (snapshot.hasData) {
+            return ListView.builder(
+              itemCount: snapshot.data.length,
+              itemBuilder: (BuildContext context, int index) {
+                Bill item = snapshot.data[index];
+                return ListTile(
+                  title: Text(item.name),
+                  leading: Text(item.description),
 
-              List<Product>
-              items = List<Product>();
-
-              for(var i = 0; i < documents.length; i++) {
-                DocumentSnapshot document = documents[i];
-                items.add(Product.fromMap(document.data));
-              }
-              return ProductBoxList(items: items);
-            } else {
-              return Center(child: CircularProgressIndicator());
-            }
-          },
-          ),
-        )
+//                  trailing: Checkbox(
+//                    onChanged: (bool value) {
+//                      DBProvider.db.blockClient(item);
+//                      setState(() {});
+//                    },
+//                    value: item.blocked,
+//                  ),
+                );
+              },
+            );
+          } else {
+            return Center(child: Text("No Data Returned"));
+          }
+        },
+      ),
+//      floatingActionButton: FloatingActionButton(
+//        child: Icon(Icons.add),
+//        onPressed: () async {
+//          Client rnd = testClients[math.Random().nextInt(testClients.length)];
+//          await DBProvider.db.newClient(rnd);
+//          setState(() {});
+//        },
+//      ),
     );
   }
+}

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app_test_api/interfaces/idatastore.dart';
 import '../models/bill.dart';
 import '../repositories/bill_repository.dart';
 // import 'home.dart';
@@ -19,7 +20,7 @@ class BillForm extends StatefulWidget {
 }
 
 class _AddBillFormState extends State<BillForm> {
-  var _service = new BillService();
+  var _service = new IDataStore();
 
 //  Bill _bill = new Bill();
   final name = TextEditingController();
